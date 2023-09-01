@@ -2,10 +2,10 @@ package main
 
 import (
 	"flag"
-	"io"
-	"log"
 	"net/http"
+	"sync"
 
+	"github.com/elazarl/goproxy"
 	"github.com/sirupsen/logrus"
 	"gitlab.com/schoentoon/wg-proxy/pkg/dialer"
 )
@@ -35,18 +35,24 @@ func main() {
 		logrus.Fatal(err)
 	}
 
-	client := http.Client{
-		Transport: &http.Transport{
+	var wg sync.WaitGroup
+
+	if cfg.Proxy.HTTP.Addr != "" {
+		wg.Add(1)
+		proxy := goproxy.NewProxyHttpServer()
+		proxy.Verbose = cfg.Debug
+		proxy.Tr = &http.Transport{
 			DialContext: dial.DialContext,
-		},
+		}
+
+		go func(wg *sync.WaitGroup, proxy *goproxy.ProxyHttpServer) {
+			err := http.ListenAndServe(cfg.Proxy.HTTP.Addr, proxy)
+			if err != nil {
+				logrus.Error(err)
+			}
+			defer wg.Done()
+		}(&wg, proxy)
 	}
-	resp, err := client.Get("http://192.168.2.1/")
-	if err != nil {
-		log.Fatal(err)
-	}
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
-		log.Fatal(err)
-	}
-	log.Println(string(body))
+
+	wg.Wait()
 }

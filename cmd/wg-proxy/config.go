@@ -11,6 +11,12 @@ type Config struct {
 	Interface dialer.Interface `yaml:"interface"`
 	Peers     []dialer.Peer    `yaml:"peer"`
 
+	Proxy struct {
+		HTTP struct {
+			Addr string `yaml:"addr"`
+		} `yaml:"http"`
+	} `yaml:"proxy"`
+
 	Debug bool `yaml:"debug"`
 }
 

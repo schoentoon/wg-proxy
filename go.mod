@@ -9,6 +9,7 @@ require (
 )
 
 require (
+	github.com/elazarl/goproxy v0.0.0-20230808193330-2592e75ae04a // indirect
 	github.com/google/btree v1.0.1 // indirect
 	github.com/kr/pretty v0.2.1 // indirect
 	golang.org/x/crypto v0.6.0 // indirect
