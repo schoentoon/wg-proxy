@@ -18,6 +18,7 @@ type Peer struct {
 	PublicKey string `yaml:"public_key"`
 	Endpoint  string `yaml:"endpoint"`
 	AllowedIP string `yaml:"allowedip"`
+	KeepAlive int    `yaml:"keep_alive"`
 }
 
 func base64KeyToHex(in string) (string, error) {
@@ -35,5 +36,11 @@ func (p *Peer) toIpcString() (string, error) {
 		return "", err
 	}
 
-	return fmt.Sprintf("public_key=%s\nallowed_ip=%s\nendpoint=%s\n", key, p.AllowedIP, p.Endpoint), nil
+	out := fmt.Sprintf("public_key=%s\nallowed_ip=%s\nendpoint=%s\n", key, p.AllowedIP, p.Endpoint)
+
+	if p.KeepAlive > 0 {
+		out = fmt.Sprintf("%spersistent_keepalive_interval=%d\n", out, p.KeepAlive)
+	}
+
+	return out, err
 }
