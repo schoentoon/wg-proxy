@@ -23,11 +23,15 @@ func NewDialer(in Interface, peers ...Peer) (*Dialer, error) {
 	if err != nil {
 		return nil, err
 	}
-	dns, err := netip.ParseAddr(in.Dns)
-	if err != nil {
-		return nil, err
+	dns_addresses := []netip.Addr{}
+	for _, raw := range in.Dns {
+		dns, err := netip.ParseAddr(raw)
+		if err != nil {
+			return nil, err
+		}
+		dns_addresses = append(dns_addresses, dns)
 	}
-	tun, tnet, err := netstack.CreateNetTUN([]netip.Addr{addr}, []netip.Addr{dns}, MTU)
+	tun, tnet, err := netstack.CreateNetTUN([]netip.Addr{addr}, dns_addresses, MTU)
 	if err != nil {
 		return nil, err
 	}

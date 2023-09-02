@@ -9,9 +9,9 @@ import (
 )
 
 type Interface struct {
-	Address    string `yaml:"address"`
-	PrivateKey string `yaml:"private_key"`
-	Dns        string `yaml:"dns"`
+	Address    string   `yaml:"address"`
+	PrivateKey string   `yaml:"private_key"`
+	Dns        []string `yaml:"dns"`
 }
 
 type Peer struct {
