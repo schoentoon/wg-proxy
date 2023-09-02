@@ -1,0 +1,14 @@
+interface:
+  address: "<your ip address>"
+  private_key: "<your private key>"
+  dns: # dns servers to be used
+    - "1.1.1.1"
+    - "1.0.0.1"
+peer:
+  - public_key: "<public key>"
+    endpoint: "<end point ip address>:51820"
+    allowedip: "0.0.0.0/0" # What addresses is it allowed to have, or rather what should get routed through it
+    keep_alive: 60
+proxy:
+  http:
+    addr: ":8080" # Expose a http proxy on this port
