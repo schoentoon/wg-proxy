@@ -16,9 +16,10 @@ const MTU = 1420
 
 type Dialer struct {
 	net *netstack.Net
+	dev *device.Device
 }
 
-func NewDialer(in Interface, peers ...Peer) (*Dialer, error) {
+func NewDialer(debug bool, in Interface, peers ...Peer) (*Dialer, error) {
 	addr, err := netip.ParseAddr(in.Address)
 	if err != nil {
 		return nil, err
@@ -36,7 +37,11 @@ func NewDialer(in Interface, peers ...Peer) (*Dialer, error) {
 		return nil, err
 	}
 
-	dev := device.NewDevice(tun, conn.NewDefaultBind(), device.NewLogger(device.LogLevelVerbose, ""))
+	logger := device.NewLogger(device.LogLevelSilent, "wireguard")
+	if debug {
+		logger = device.NewLogger(device.LogLevelVerbose, "wireguard")
+	}
+	dev := device.NewDevice(tun, conn.NewDefaultBind(), logger)
 
 	key, err := base64KeyToHex(in.PrivateKey)
 	if err != nil {
@@ -61,6 +66,7 @@ func NewDialer(in Interface, peers ...Peer) (*Dialer, error) {
 
 	return &Dialer{
 		net: tnet,
+		dev: dev,
 	}, nil
 }
 

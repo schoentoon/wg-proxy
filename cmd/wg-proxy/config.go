@@ -17,7 +17,8 @@ type Config struct {
 		} `yaml:"http"`
 	} `yaml:"proxy"`
 
-	Debug bool `yaml:"debug"`
+	Debug   bool   `yaml:"debug"`
+	Metrics string `yaml:"metrics"`
 }
 
 // ReadConfig reads a file into the config structure
