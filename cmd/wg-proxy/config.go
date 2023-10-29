@@ -15,6 +15,9 @@ type Config struct {
 		HTTP struct {
 			Addr string `yaml:"addr"`
 		} `yaml:"http"`
+		Socks5 struct {
+			Addr string `yaml:"addr"`
+		} `yaml:"socks5"`
 	} `yaml:"proxy"`
 
 	Debug   bool   `yaml:"debug"`

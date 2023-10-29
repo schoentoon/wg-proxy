@@ -11,6 +11,7 @@ import (
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/sirupsen/logrus"
+	"github.com/things-go/go-socks5"
 	"gitlab.com/schoentoon/wg-proxy/pkg/dialer"
 )
 
@@ -54,7 +55,26 @@ func main() {
 
 		go func(wg *sync.WaitGroup, proxy *goproxy.ProxyHttpServer) {
 			defer wg.Done()
+
 			err := http.ListenAndServe(cfg.Proxy.HTTP.Addr, proxy)
+			if err != nil {
+				logrus.Error(err)
+			}
+		}(&wg, proxy)
+	}
+
+	if cfg.Proxy.Socks5.Addr != "" {
+		wg.Add(1)
+		proxy := socks5.NewServer(
+			socks5.WithDial(func(ctx context.Context, network, addr string) (net.Conn, error) {
+				return dial.DialContext(context.Background(), network, addr)
+			}),
+		)
+
+		go func(wg *sync.WaitGroup, proxy *socks5.Server) {
+			defer wg.Done()
+
+			err := proxy.ListenAndServe("tcp", cfg.Proxy.Socks5.Addr)
 			if err != nil {
 				logrus.Error(err)
 			}
