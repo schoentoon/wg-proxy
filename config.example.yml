@@ -1,3 +1,5 @@
+debug: false # Use this to help with debugging, this will happily spit out your keys.. so watch out posting logs anywhere
+metrics: :9100 # Address for a prometheus listener
 interface:
   address: "<your ip address>"
   private_key: "<your private key>"
@@ -12,3 +14,5 @@ peer:
 proxy:
   http:
     addr: ":8080" # Expose a http proxy on this port
+  socks5:
+    addr: ":8888" # Expose a socks5 proxy on this port
